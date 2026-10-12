@@ -67,6 +67,8 @@ function printRows(rows,start,end){return rows.slice(start,end).map((r,i)=>{cons
 function printTable(rows,start,end){return `<table class="p-table"><thead><tr><th>5E ಹಂತ</th><th>ಶಿಕ್ಷಕರ ಕಲಿಕಾಂಶ / ಮಾರ್ಗದರ್ಶನ</th><th>ವಿದ್ಯಾರ್ಥಿ ಚಟುವಟಿಕೆ</th><th>ಕಲಿಕೋಪಕರಣಗಳು</th><th>ಮೌಲ್ಯಮಾಪನ ಪ್ರಶ್ನೆಗಳು</th><th>ಸ್ವ-ಅವಲೋಕನ</th></tr></thead><tbody>${printRows(rows,start,end)}</tbody></table>`}
 function lessonPages(data,school,index){const source=LESSONS.find(x=>x.id===data.id)||{};const number=source.number||'ಪಾಠ';const title=data.title||source.title||'';const rows=data.stages||source.stages||[];const p1=`<section class="print-page"><div class="page-content">${printSchoolStrip(school)}<div class="lesson-title"><span>${pe(number)}</span><h1>${pe(title)}</h1><em>ಪಾಠ ಯೋಜನೆ — ಪುಟ 1 / 2</em></div><div class="meta"><div><b>ಪ್ರಕಾರ</b>${pe(data.genre)}</div><div><b>ಲೇಖಕ / ಕವಿ</b>${pe(data.author)}</div><div><b>ಪುಟಗಳು</b>${pe(data.pages)}</div><div><b>ಬೋಧನಾ ಅವಧಿ</b>${pe(data.periods)} ಪಿರಿಯಡ್‌ಗಳು</div></div><div class="brief"><div><h3>ಪಾಠದ ಆಶಯ / ಸಾರಾಂಶ</h3><p>${pe(data.theme)}</p></div><div><h3>ನಿರೀಕ್ಷಿತ ಕಲಿಕಾ ಫಲಿತಾಂಶಗಳು</h3><p>${pe(data.outcomes)}</p></div><div><h3>ಪೂರ್ವಜ್ಞಾನ ಮತ್ತು ಮೌಲ್ಯಗಳು</h3><p><b>ಪೂರ್ವಜ್ಞಾನ:</b> ${pe(data.prereq)}<br><b>ಮೌಲ್ಯಗಳು:</b> ${pe(data.values)}</p></div></div>${printTable(rows,0,3)}</div>${printFooter()}</section>`;const p2=`<section class="print-page"><div class="page-content">${printSchoolStrip(school)}<div class="lesson-title"><span>${pe(number)}</span><h1>${pe(title)}</h1><em>ಪಾಠ ಯೋಜನೆ — ಪುಟ 2 / 2</em></div>${printTable(rows,3,5)}<div class="detail-grid"><div><h3>ಭಾಷಾ ಕೌಶಲ / ವ್ಯಾಕರಣಾಂಶ</h3><p>${pe(data.focus)}</p></div><div><h3>ಹೆಚ್ಚುವರಿ ಚಟುವಟಿಕೆ / ಯೋಜನಾ ಕಾರ್ಯ</h3><p>${pe(data.project)}</p></div><div><h3>ಮನೆಕೆಲಸ / ಮುಂದುವರಿದ ಕಲಿಕೆ</h3><p>${pe(data.homework)}</p></div><div><h3>ಬೆಂಬಲ ಅಗತ್ಯವಿರುವ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ</h3><p>${pe(data.support)}</p></div><div><h3>ಮುನ್ನಡೆಯ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಸವಾಲು</h3><p>${pe(data.extension)}</p></div><div><h3>ಬೋಧನಾ ಟಿಪ್ಪಣಿ</h3><p>${pe(data.note||'_______________________________________________')}</p></div></div><div class="rubric"><b>ಮೌಲ್ಯಮಾಪನ ರೂಬ್ರಿಕ್:</b><span>ಅರ್ಥಗ್ರಹಣ</span><span>ಭಾಷಾ ಬಳಕೆ</span><span>ಭಾಗವಹಿಸುವಿಕೆ</span><span>ಸೃಜನಶೀಲತೆ</span></div><div class="sign"><span>ಶಿಕ್ಷಕರ ಸಹಿ: ${pe(data.teacherSign||'________________________')}</span><span>ಮುಖ್ಯ ಶಿಕ್ಷಕರ ಸಹಿ: ${pe(data.hmSign||'________________________')}</span><span>ಅನುವರ್ತನಾ ದಿನಾಂಕ: ${pe(data.followDate||'____________')}</span></div></div>${printFooter()}</section>`;return p1+p2}
 function openLandscapePrint(singleCard=null){const cards=singleCard?[singleCard]:[...document.querySelectorAll('.lesson-card')];if(!cards.length){alert('ಪಾಠ ಯೋಜನೆ ಇಲ್ಲ. ಮೊದಲು ಪಾಠವನ್ನು ಲೋಡ್ ಮಾಡಿ.');return}const w=window.open('','_blank');if(!w){alert('PDF ವಿಂಡೋ ತೆರೆಯಲು ಬ್ರೌಸರ್‌ನಲ್ಲಿ pop-up ಅನ್ನು ಅನುಮತಿಸಿ.');return}const school=schoolData();const pages=cards.map((card,i)=>lessonPages(collectCard(card),school,i)).join('');const styles=`<style>@page{size:297mm 210mm;margin:7mm 8mm 10mm 8mm}*{box-sizing:border-box}html,body{margin:0;padding:0;color:#29231c;font-family:'Noto Sans Kannada','Nirmala UI','Tunga',sans-serif;font-size:11.2pt;line-height:1.34}.print-page{height:190mm;max-height:190mm;overflow:hidden;page-break-after:always;break-after:page;display:flex;flex-direction:column}.print-page:last-child{page-break-after:auto;break-after:auto}.page-content{flex:1;display:flex;flex-direction:column}.school-strip{display:flex;justify-content:space-between;gap:3mm;border-bottom:.35pt solid #cbb895;padding:0 0 1.2mm;font-size:8.4pt;color:#4f463c}.lesson-title{display:flex;align-items:center;gap:3mm;border-bottom:1pt solid #dba92f;padding:1.8mm 0 1.5mm;margin-bottom:2mm}.lesson-title span{background:#6f1d2d;color:#fff;border-radius:6mm;padding:1.1mm 2.5mm;font-size:8pt;font-weight:bold;white-space:nowrap}.lesson-title h1{font-family:Georgia,'Noto Serif Kannada',serif;color:#6f1d2d;font-size:18pt;margin:0;flex:1}.lesson-title em{font-style:normal;color:#6d645a;font-size:8.6pt}.meta{display:grid;grid-template-columns:1fr 1.6fr .7fr 1fr;gap:2mm;margin-bottom:2mm}.meta div,.brief>div,.detail-grid>div{border:.35pt solid #dcc9a9;border-radius:1.3mm;padding:1.6mm;background:#fffdf9}.meta b{display:block;color:#6f1d2d;font-size:8.3pt;margin-bottom:.3mm}.brief{display:grid;grid-template-columns:1.15fr 1.5fr 1.1fr;gap:2mm;margin-bottom:2mm}.brief h3,.detail-grid h3{font-size:9.7pt;color:#6f1d2d;margin:0 0 .6mm}.brief p,.detail-grid p{margin:0;font-size:9.7pt}.p-table{width:100%;border-collapse:collapse;table-layout:fixed;font-size:11.2pt}.p-table th,.p-table td{border:.35pt solid #cdb997;padding:1.45mm;vertical-align:top}.p-table th{background:#eee0c4;color:#4b1622;text-align:center;font-size:9.7pt}.p-table th:nth-child(1){width:9%}.p-table th:nth-child(2),.p-table th:nth-child(3){width:26%}.p-table th:nth-child(4){width:13%}.p-table th:nth-child(5){width:17%}.p-table th:nth-child(6){width:9%}.stage{background:#fbf4e8;color:#6f1d2d;text-align:center;font-size:10.3pt}.stage small{display:block;color:#61574d;font-size:8.7pt;margin-top:.5mm}.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2mm;margin-top:2mm}.rubric{display:flex;gap:2mm;align-items:center;margin-top:2.5mm;border:.35pt solid #cce0d3;background:#f5fbf7;padding:1.5mm;font-size:8.3pt;color:#15583b}.rubric span{background:#fff;border:.3pt solid #cde0d3;padding:.8mm 1.5mm;border-radius:1mm}.sign{display:flex;justify-content:space-between;gap:8mm;margin-top:3mm;padding-top:1.5mm;border-top:.35pt solid #c8b99e;font-size:8.7pt}.page-footer{margin-top:auto;border-top:.35pt solid #aa987f;text-align:center;padding-top:1.2mm;font-size:10.5pt}.page-footer a{color:#6f1d2d;text-decoration:underline;font-weight:bold}.page-footer span{padding:0 3mm;color:#b68b30}@media print{a{color:#6f1d2d!important}@page{size:297mm 210mm;margin:7mm 8mm 10mm 8mm}}</style>`;w.document.open();w.document.write(`<!doctype html><html lang="kn"><head><meta charset="utf-8"><title>1ನೇ ತರಗತಿ ಕನ್ನಡ — ಪಾಠ ಯೋಜನೆ</title>${styles}</head><body>${pages}</body></html>`);w.document.close();w.focus();setTimeout(()=>w.print(),350)}
+
+  
 function printAll(){openLandscapePrint()}
 function printSingle(btn){openLandscapePrint(btn.closest('.lesson-card'))}
 
@@ -80,3 +82,81 @@ applyWebsiteSettings();
 loadState();bindInputs();
 </script>
 <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a484a9de5a228c9a',t:'MTc5MTYyNTIyNQ=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body></html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<head>
+    <meta charset="UTF-8">
+    <!-- ಇದು ಮೊಬೈಲ್‌ನಲ್ಲಿಯೂ ಡೆಸ್ಕ್‌ಟಾಪ್ ವ್ಯೂ ಬರುವುದನ್ನು ಖಚಿತಪಡಿಸುತ್ತದೆ -->
+    <meta name="viewport" content="width=1200, initial-scale=1.0">
+    <title>ನಿಮ್ಮ ಪೇಜ್ ಶೀರ್ಷಿಕೆ</title>
+</head>
+
+
+
+
+
+
+
+
+
+
+
+<style>
+@media print{
+  .no-print{
+    display:none !important;
+  }
+}
+</style>
+
+<div class="no-print" style="text-align:center;margin:15px 0;">
+  <a href="https://bilingualmediumschools.blogspot.com/2026/04/home-page.html"
+     target="_blank"
+     style="display:inline-block;
+            background:#1565c0;
+            color:#fff;
+            text-decoration:none;
+            padding:10px 18px;
+            border-radius:8px;
+            font-weight:bold;
+            font-size:16px;">
+<br> ರಚನೆ: ಮನೋಹರ್ ಆರ್‌ ಕೆ.ಜಿ.ಎಫ್<br>
+    🌐 School Resource Centre – Click Here to Visit
+  </a>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
